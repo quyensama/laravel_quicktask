@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -27,3 +27,10 @@ Route::get('register', [AuthController::class, 'register'])->name('register');
 Route::post('custom-register', [AuthController::class, 'customRegister'])->name('register.custom');
 
 Route::get('logout', [AuthController::class, 'logOut'])->name('logout');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('index', [PostController::class, 'index'])->name('index');
+    Route::get('create', [PostController::class, 'create'])->name('create');
+    Route::get('edit', [PostController::class, 'edit'])->name('edit');
+    Route::resource('posts', 'PostController');
+});
