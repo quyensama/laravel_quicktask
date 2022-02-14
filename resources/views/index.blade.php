@@ -10,9 +10,9 @@
 </style>
 <div class="uper">
     <div class="col-9 mx-auto">
-        @if(session()->get('success'))
+        @if(session()->get('message'))
             <div class="alert alert-success">
-                {{ session()->get('success') }}
+                {{ session()->get('message') }}
             </div><br />
         @endif
         <a href="{{ route('create')}}" class="btn btn-success my-2">{{ __('Create') }}</a>

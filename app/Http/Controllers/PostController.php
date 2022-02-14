@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
@@ -18,6 +20,7 @@ class PostController extends Controller
     {
         $user_id = Auth::id();
         $posts = User::find($user_id)->posts;
+
         return view('index', compact('posts'));
     }
 
@@ -37,17 +40,14 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
         $user_id = Auth::id();
-        $validateData = $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required|max:255',
-        ]); 
+        $validateData = $request->validated();
         $validateData['user_id'] = $user_id;
         $show = Post::create($validateData);
 
-        return redirect('/index')->with('success', 'post is saved');
+        return redirect('/index')->with('message', trans('message.success_save'));
     }
 
     /**
@@ -70,6 +70,7 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
+
         return view('edit', compact('post'));
     }
 
@@ -80,15 +81,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePostRequest $request, $id)
     {
-        $validateData = $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required|max:255',
-        ]);
+        $validateData = $request->validated();
         Post::whereId($id)->update($validateData);
 
-        return redirect('/index')->with('success', 'Post is updated');
+        return redirect('/index')->with('message', trans('message.success_update'));
     }
 
     /**
@@ -102,6 +100,6 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         $post->delete();
 
-        return redirect('/index')->with('success', 'Post is deleted');
+        return redirect('/index')->with('message', trans('message.success_delete'));
     }
 }
